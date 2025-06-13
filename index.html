@@ -10,33 +10,28 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Привет, <span id="username">Пользователь</span>!</h1>
-                <img id="userphoto" src="https://via.placeholder.com/100" alt="User Photo">            
-                <script src="https://telegram.org/js/telegram-web-app.js"></script>
-                <script>
-                    // Инициализация Telegram Web App
-                    const tg = window.Telegram.WebApp;
-                    tg.ready(); // Сообщаем Telegram, что приложение готово
+            <div class="user-profile">
+                <img class="user-photo" id="userphoto" src="istockphoto-1495088043-612x612.jpg" alt="User Photo">
+                <span class="username" id="username">Пользователь</span>
+            </div>
+            
+            <script src="https://telegram.org/js/telegram-web-app.js"></script>
+            <script>
+                const tg = window.Telegram.WebApp;
+                tg.ready();
 
-                    // Получаем данные пользователя
-                    const user = tg.initDataUnsafe.user;
-                    if (user) {
-                        // Устанавливаем имя пользователя
-                        document.getElementById('username').textContent = 
-                            user.first_name ? user.first_name + (user.last_name ? ' ' + user.last_name : '') : 'Пользователь';
-                        
-                        // Устанавливаем фотографию профиля
-                        if (user.photo_url) {
-                            document.getElementById('userphoto').src = user.photo_url;
-                        } else {
-                            // Если фото недоступно, оставляем заглушку или устанавливаем дефолтное изображение
-                            document.getElementById('userphoto').src = 'https://via.placeholder.com/100';
-                        }
-                    } else {
-                        // Если данные пользователя недоступны
-                        document.getElementById('username').textContent = 'Гость';
+                const user = tg.initDataUnsafe.user;
+                if (user) {
+                    document.getElementById('username').textContent = 
+                        user.first_name ? user.first_name + (user.last_name ? ' ' + user.last_name : '') : 'Пользователь';
+                    
+                    if (user.photo_url) {
+                        document.getElementById('userphoto').src = user.photo_url;
                     }
-                </script>
+                } else {
+                    document.getElementById('username').textContent = 'Гость';
+                }
+            </script>
         </div>
         <div class="tasks">
                 <div class="task">
