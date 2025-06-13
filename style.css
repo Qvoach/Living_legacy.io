@@ -1,7 +1,7 @@
 body{
     background-color: #F8F8F8;
     margin: 0px;
-    height: 874px;
+    height: 625px;
     width: 402px;
     font-family: "Inter", sans-serif;
     display: flex;
@@ -12,7 +12,7 @@ body{
 }
 
 .container{
-    height: 874px;
+    height: 625px;
     width: 402px;
     justify-content: center;
 }
@@ -37,7 +37,7 @@ body{
     height: 120px;
     border-radius: 50%; /* Делаем фото круглым */
     object-fit: cover; /* Обрезка изображения для заполнения */
-    border: 1px solid var(--tg-theme-button-color); /* Опционально: обводка */
+    border: 2px solid var(--tg-theme-button-color); /* Опционально: обводка */
 }
 .username {
     font-size: 40px;
