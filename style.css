@@ -22,7 +22,7 @@ body{
 .header{
     background-color: rgb(255, 255, 255);
     width: 402px;
-    height: 110px;
+    height: 100px;
     margin-top: 0px;
     box-shadow:2px 2px 4px rgb(226, 226, 226);
 }
@@ -33,11 +33,11 @@ body{
     gap: 15px; /* Расстояние между фото и именем */
 }
 .user-photo {
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%; /* Делаем фото круглым */
     object-fit: cover; /* Обрезка изображения для заполнения */
-    border: 2px solid var(--tg-theme-button-color); /* Опционально: обводка */
+    border: 0px solid var(--tg-theme-button-color); /* Опционально: обводка */
 }
 .username {
     font-size: 40px;
