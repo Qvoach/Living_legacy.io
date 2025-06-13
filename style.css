@@ -27,10 +27,30 @@ body{
     box-shadow:2px 2px 4px rgb(226, 226, 226);
 }
 
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--tg-theme-button-color);
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+}
+
 .task{
     font-size: 28px;
     font-weight: 500;
 }
+
 .tasks{
     width: 386px;
     height: 185px;
