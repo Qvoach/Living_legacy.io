@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Привет, <span id="username">Пользователь</span>!</h1>
+                <img id="userphoto" src="https://via.placeholder.com/100" alt="User Photo">            
+                <script src="https://telegram.org/js/telegram-web-app.js"></script>
+                <script>
+                    // Инициализация Telegram Web App
+                    const tg = window.Telegram.WebApp;
+                    tg.ready(); // Сообщаем Telegram, что приложение готово
+
+                    // Получаем данные пользователя
+                    const user = tg.initDataUnsafe.user;
+                    if (user) {
+                        // Устанавливаем имя пользователя
+                        document.getElementById('username').textContent = 
+                            user.first_name ? user.first_name + (user.last_name ? ' ' + user.last_name : '') : 'Пользователь';
+                        
+                        // Устанавливаем фотографию профиля
+                        if (user.photo_url) {
+                            document.getElementById('userphoto').src = user.photo_url;
+                        } else {
+                            // Если фото недоступно, оставляем заглушку или устанавливаем дефолтное изображение
+                            document.getElementById('userphoto').src = 'https://via.placeholder.com/100';
+                        }
+                    } else {
+                        // Если данные пользователя недоступны
+                        document.getElementById('username').textContent = 'Гость';
+                    }
+                </script>
+        </div>
+        <div class="tasks">
+                <div class="task">
+                    Задачи
+                </div>
+                <div class="buttons">
+                    <div class="button" onclick="toggleColor(this)">
+                        <div class="button-text">Полив</div>
+                    </div>
+                    <div class="button" onclick="toggleColor(this)">
+                        <div class="button-text">Осмотр</div>
+                    </div>
+                    <div class="button" onclick="toggleColor(this)">
+                        <div class="button-text">Мульчирование</div>
+                </div>
+                </div>
+                <script>
+                        // При загрузке страницы проверяем состояние каждой кнопки
+                        document.querySelectorAll('.button').forEach(button => {
+                            const buttonText = button.querySelector('.button-text').textContent;
+                            if (localStorage.getItem(`buttonState_${buttonText}`) === 'clicked') {
+                                button.classList.add('clicked');
+                            }
+                        });
+
+                        function toggleColor(element) {
+                            const buttonText = element.querySelector('.button-text').textContent;
+                            element.classList.toggle('clicked');
+                            // Сохраняем состояние
+                            if (element.classList.contains('clicked')) {
+                                localStorage.setItem(`buttonState_${buttonText}`, 'clicked');
+                            } else {
+                                localStorage.removeItem(`buttonState_${buttonText}`);
+                            }
+                        }
+                </script>        
+        </div>
+        <div class="info">
+            <div class="button-change">Изменить размер</div>
+            <div class="button-history">История</div>
+            <div class="button-photo">Сделать фото</div>
+        </div>
+    </div>
+
+</body>
+</html>

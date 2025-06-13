@@ -1,0 +1,143 @@
+body{
+    background-color: #F8F8F8;
+    margin: 0px;
+    height: 874px;
+    width: 402px;
+    font-family: "Inter", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+}
+
+.container{
+    height: 874px;
+    width: 402px;
+    justify-content: center;
+}
+
+
+
+.header{
+    background-color: rgb(255, 255, 255);
+    width: 402px;
+    height: 183px;
+    margin-top: 0px;
+    box-shadow:2px 2px 4px rgb(226, 226, 226);
+}
+
+.task{
+    font-size: 28px;
+    font-weight: 500;
+}
+.tasks{
+    width: 386px;
+    height: 185px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow:2px 2px 4px rgb(226, 226, 226),-2px -2px 4px rgb(226, 226, 226),-2px 2px 4px rgb(226, 226, 226),2px -2px 4px rgb(226, 226, 226);
+    margin-left: 8px;
+    margin-right: 6px;
+    text-align: center;
+    margin-top: 12px;
+      
+}
+
+.buttons {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.button {
+    width: 370px;
+    height: 28px;
+    background-color: #DEE2E3;
+    border-color: black;
+    margin-top: 3px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    padding-top: 8px;
+    border: thin solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.button.clicked {
+    transition: 0.3s;
+    background-color: #00B368;
+    color: white;
+}
+
+.button-text {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.info{
+    position: relative;
+    width: 386px;
+    height: 302px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow:2px 2px 4px rgb(226, 226, 226),-2px -2px 4px rgb(226, 226, 226),-2px 2px 4px rgb(226, 226, 226),2px -2px 4px rgb(226, 226, 226);
+    margin-left: 8px;
+    margin-right: 6px;
+    text-align: center;
+    margin-top: 12px;
+      
+}
+
+.button-change{
+    position: absolute;
+    width: 170px;
+    height: 34px;
+    background-color: #DEE2E3;
+    border: thin solid black;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 16px;
+    font-size: 500;
+    bottom: 86px;
+    padding-top: 14px;
+    left: 14px;
+    
+}
+
+.button-history{
+    position: absolute;
+    width: 170px;
+    height: 33px;
+    background-color: #DEE2E3;
+    border: thin solid black;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 16px;
+    font-size: 500;
+    bottom: 86px;
+    padding-top: 15px;
+    right: 14px;
+    
+}
+
+.button-photo{
+    position: absolute;
+    width: 328px;
+    height: 33px;
+    color: white;
+    background-color: #00B368;
+    border: thin solid black;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 20px;
+    font-size: 500;
+    bottom: 20px;
+    padding-top: 11px;
+    right: 29px;
+    
+}
