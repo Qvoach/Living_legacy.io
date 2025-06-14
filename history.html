@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>История</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>История фотографий</h1>
+    <div id="history-photos"></div>
+  </div>
+  <script>
+    const history = JSON.parse(localStorage.getItem('photoHistory') || '[]');
+    const container = document.getElementById('history-photos');
+    history.forEach(item => {
+      const div = document.createElement('div');
+      const img = document.createElement('img');
+      img.src = item.src;
+      img.style.maxWidth = '100%';
+      img.style.height = 'auto';
+      const dateP = document.createElement('p');
+      dateP.textContent = `Сделано ${item.date}`;
+      div.appendChild(img);
+      div.appendChild(dateP);
+      container.appendChild(div);
+    });
+  </script>
+</body>
+</html>
