@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Домой</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="user-profile">
+        <img src="img/istockphoto-1495088043-612x612.jpg" alt="Фото пользователя" class="user-photo">
+        <div class="username">Пользователь</div>
+      </div>
+    </header>
+
+    <div class="tasks">
+      <div class="task">Задачи</div>
+      <div class="buttons">
+        <div class="button">Полив</div>
+        <div class="button" >Осмотр</div>
+        <div class="button">Мульчирование</div>
+      </div>
+    </div>
+
+    <div class="info">
+      <div class="button-change">Изменить размер</div>
+      <div class="button-history">История</div>
+      <div class="button-photo">Сделать фото</div>
+    </div>
+
+    <div class="lower"></div>
+  </div>
+
+  <nav class="bottom-menu">
+    <a href="tournament.html" class="menu-item" data-page="tournament">
+      <div class="icon-container">
+        <img src="img/tournament-gray.svg" alt="Турнир (серый)" class="gray">
+        <img src="img/tournament-green.svg" alt="Турнир (зеленый)" class="green">
+      </div>
+      <span>Турнир</span>
+    </a>
+    <a href="index.html" class="menu-item active" data-page="home">
+      <div class="icon-container">
+        <img src="img/home-gray.svg" alt="Домой (серый)" class="gray">
+        <img src="img/home-green.svg" alt="Домой (зеленый)" class="green">
+      </div>
+      <span>Домой</span>
+    </a>
+    <a href="settings.html" class="menu-item" data-page="settings">
+      <div class="icon-container">
+        <img src="img/settings-gray.svg" alt="Настройки (серый)" class="gray">
+        <img src="img/settings-green.svg" alt="Настройки (зеленый)" class="green">
+      </div>
+      <span>Настройки</span>
+    </a>
+  </nav>
+
+  <script>
+    // Обработчики для меню (Турнир, Домой, Настройки)
+const menuItems = document.querySelectorAll('.menu-item');
+
+function handleMenuClick(event) {
+  event.preventDefault();
+  menuItems.forEach(item => item.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  localStorage.setItem('activePage', event.currentTarget.dataset.page);
+  window.location.href = event.currentTarget.href;
+}
+
+menuItems.forEach(item => item.addEventListener('click', handleMenuClick));
+
+window.addEventListener('load', () => {
+  const activePage = localStorage.getItem('activePage') || 'home';
+  menuItems.forEach(item => {
+    item.classList.toggle('active', item.dataset.page === activePage);
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const buttons = document.querySelectorAll('.button');
+
+  buttons.forEach(button => {
+    const buttonKey = button.innerText;
+    if (localStorage.getItem(buttonKey) === 'clicked') {
+      button.classList.add('clicked');
+    }
+
+    button.addEventListener('click', function () {
+      const isClicked = button.classList.toggle('clicked');
+      if (isClicked) {
+        localStorage.setItem(buttonKey, 'clicked');
+      } else {
+        localStorage.removeItem(buttonKey);
+      }
+    });
+  });
+});
+  </script>
+</body>
+</html>
