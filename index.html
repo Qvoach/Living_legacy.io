@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Домой</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://telegram.org/js/telegram-web-app.js?57"></script>
 </head>
 <body>
   <div class="container">
@@ -97,6 +98,28 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
+
+    document.addEventListener('DOMContentLoaded',
+    function () {
+      if (window.Telegram && window.Telegram.WebApp) {
+        const user = Telegram.WebApp.initDataUnsafe.user;
+        if (user) {
+          const userName = `${user.first_name} ${user.last_name || ''}`.trim();
+          const photoUrl = user.photo_url || 'default_photo.jpg';
+          
+          const nameElement = document.getElementById('user-name');
+          const photoElement = document.getElementById('user-photo');
+          
+          if (nameElement) {
+            nameElement.textContent = userName;
+          }
+          if (photoElement) {
+            photoElement.src = photoUrl;
+            photoElement.alt = userName;
+          }
+        }
+      }
+    });    
   </script>
 </body>
 </html>
