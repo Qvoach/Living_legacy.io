@@ -36,11 +36,12 @@ body {
   display: flex;
   align-items: center;
   gap: 15px;
+  font-size: 40px;
 }
 
 .user-photo {
-  width: 20%;
-  height: 20%;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   object-fit: cover;
   border: 0px solid var(--tg-theme-button-color, #000);
