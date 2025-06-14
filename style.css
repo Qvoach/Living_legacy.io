@@ -1,7 +1,7 @@
 body {
   background-color: #F8F8F8;
   margin: 0;
-  min-height: 100vh; /* Полная высота экрана для адаптивности */
+  height: 600px; /* Полная высота экрана для адаптивности */
   font-family: "Inter", sans-serif;
   display: flex;
   justify-content: center;
@@ -13,7 +13,7 @@ body {
 .container {
   width: 100%;
   max-width: 402px; /* Максимальная ширина для Telegram Mini App */
-  min-height: 100vh; /* Полная высота */
+   height: 600px;; /* Полная высота */
   display: flex;
   flex-direction: column;
   align-items: center;
