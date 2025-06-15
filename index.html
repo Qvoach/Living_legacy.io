@@ -195,7 +195,7 @@
             // Установка даты
             const now = new Date();
             const dateString = now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long'});
-            document.getElementById('photo-date').textContent = `Фото ${dateString}`;
+            document.getElementById('photo-date').textContent = `Фото: ${dateString}`;
             localStorage.setItem('currentPhoto', dataURL);
             localStorage.setItem('photoDate', dateString);
           };
