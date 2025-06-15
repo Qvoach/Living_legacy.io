@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>История</title>
+  <link rel="stylesheet" href="history.css">
+</head>
+<body>
+  <div class="bg-history">
+
+    <div class="container">
+      <h2>История фотографий</h1>
+      <div id="history-photos" style="width: 60%;"></div>
+    </div>
+    
+  </div>
+
+  <nav class="bottom-menu">
+    <a href="tournament.html" class="menu-item" data-page="tournament">
+      <div class="icon-container">
+        <img src="img/tournament-gray.svg" alt="Турнир (серый)" class="gray">
+        <img src="img/tournament-green.svg" alt="Турнир (зеленый)" class="green">
+      </div>
+      <span>Турнир</span>
+    </a>
+    <a href="index.html" class="menu-item active" data-page="home">
+      <div class="icon-container">
+        <img src="img/home-gray.svg" alt="Домой (серый)" class="gray">
+        <img src="img/home-green.svg" alt="Домой (зеленый)" class="green">
+      </div>
+      <span>Домой</span>
+    </a>
+    <a href="settings.html" class="menu-item" data-page="settings">
+      <div class="icon-container">
+        <img src="img/settings-gray.svg" alt="Настройки (серый)" class="gray">
+        <img src="img/settings-green.svg" alt="Настройки (зеленый)" class="green">
+      </div>
+      <span>Настройки</span>
+    </a>
+  </nav>
+
+  <script>
+    const history = JSON.parse(localStorage.getItem('photoHistory') || '[]');
+    const container = document.getElementById('history-photos');
+    history.forEach(item => {
+      const div = document.createElement('div');
+      const img = document.createElement('img');
+      img.src = item.src;
+      img.style.maxWidth = '100%';
+      img.style.height = 'auto';
+      const dateP = document.createElement('p');
+      dateP.textContent = `Сделано ${item.date}`;
+      div.appendChild(img);
+      div.appendChild(dateP);
+      container.appendChild(div);
+    });
+
+        // Обработчики для меню (Турнир, Домой, Настройки)
+    const menuItems = document.querySelectorAll('.menu-item');
+
+    function handleMenuClick(event) {
+      event.preventDefault();
+      menuItems.forEach(item => item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      localStorage.setItem('activePage', event.currentTarget.dataset.page);
+      window.location.href = event.currentTarget.href;
+    }
+
+    menuItems.forEach(item => item.addEventListener('click', handleMenuClick));
+
+    window.addEventListener('load', () => {
+      const activePage = localStorage.getItem('activePage') || 'home';
+      menuItems.forEach(item => {
+        item.classList.toggle('active', item.dataset.page === activePage);
+      });
+    });
+  </script>
+</body>
+</html>
