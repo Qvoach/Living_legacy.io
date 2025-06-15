@@ -13,7 +13,7 @@ body {
 .container {
   width: 100%;
   max-width: 402px; /* Максимальная ширина для Telegram Mini App */
-   height: 600px;; /* Полная высота */
+  height: 600px;; /* Полная высота */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,7 +103,7 @@ body {
 .info {
   position: relative;
   width: 94%;
-  height: 250px;
+  height: 300px;
   border-radius: 10px;
   background-color: white;
   box-shadow: 2px 2px 4px rgb(226, 226, 226), -2px -2px 4px rgb(226, 226, 226), -2px 2px 4px rgb(226, 226, 226), 2px -2px 4px rgb(226, 226, 226);
