@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Турнир</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="tournament-tab">
+    <h2>Турнирная таблица</h2>
+    <form id="score-form">
+      <label for="score">Введите ваш счет:</label>
+      <input type="number" id="score" name="score" required>
+      <button type="submit">Отправить</button>
+    </form>
+    <table id="tournament-table">
+      <thead>
+        <tr>
+          <th>Место</th>
+          <th>Имя пользователя</th>
+          <th>Счет</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js?57"></script>
+  <script src="script.js"></script>
+
+  <nav class="bottom-menu">
+    <a href="tournament.html" class="menu-item active" data-page="tournament">
+      <div class="icon-container">
+        <img src="img/tournament-gray.svg" alt="Турнир (серый)" class="gray">
+        <img src="img/tournament-green.svg" alt="Турнир (зеленый)" class="green">
+      </div>
+      <span>Турнир</span>
+    </a>
+    <a href="index.html" class="menu-item" data-page="home">
+      <div class="icon-container">
+        <img src="img/home-gray.svg" alt="Домой (серый)" class="gray">
+        <img src="img/home-green.svg" alt="Домой (зеленый)" class="green">
+      </div>
+      <span>Домой</span>
+    </a>
+    <a href="settings.html" class="menu-item" data-page="settings">
+      <div class="icon-container">
+        <img src="img/settings-gray.svg" alt="Настройки (серый)" class="gray">
+        <img src="img/settings-green.svg" alt="Настройки (зеленый)" class="green">
+      </div>
+      <span>Настройки</span>
+    </a>
+  </nav>
+
+  <script>
+    const menuItems = document.querySelectorAll('.menu-item');
+
+    function handleMenuClick(event) {
+      event.preventDefault();
+      menuItems.forEach(item => item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      localStorage.setItem('activePage', event.currentTarget.dataset.page);
+      window.location.href = event.currentTarget.href;
+    }
+
+    menuItems.forEach(item => item.addEventListener('click', handleMenuClick));
+
+    window.addEventListener('load', () => {
+      const activePage = localStorage.getItem('activePage') || 'home';
+      menuItems.forEach(item => {
+        item.classList.toggle('active', item.dataset.page === activePage);
+      });
+    });
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+      document.body.style.backgroundColor = Telegram.WebApp.themeParams.bg_color || '#F8F8F8';
+      document.querySelector('.bottom-menu').style.backgroundColor =
+        Telegram.WebApp.themeParams.secondary_bg_color || '#fff';
+    }
+
+    // Инициализация Supabase
+    
+
+    import { createClient } from '@supabase/supabase-js'
+    const supabaseUrl = 'https://gewontcvsqhogoqjeavi.supabase.co'
+    const supabaseKey = process.env.SUPABASE_KEY
+    const supabase = createClient(supabaseUrl, supabaseKey)
+    // Отправка счета
+    document.getElementById('score-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const score = parseInt(document.getElementById('score').value);
+      const user = window.Telegram.WebApp.initDataUnsafe.user;
+
+      if (!user) {
+        alert('Ошибка: пользователь не авторизован');
+        return;
+      }
+
+      try {
+        const { error } = await supabase
+          .from('users')
+          .upsert({
+            userId: user.id.toString(),
+            username: user.username || 'Аноним',
+            score
+          });
+
+        if (error) {
+          console.error('Ошибка отправки счета:', error);
+          alert('Ошибка отправки счета');
+        } else {
+          alert('Счет успешно отправлен');
+          fetchTable(); // Обновляем таблицу
+        }
+      } catch (e) {
+        console.error('Исключение:', e);
+        alert('Произошла ошибка');
+      }
+    });
+
+    // Получение и отображение таблицы
+    async function fetchTable() {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .order('score', { ascending: false });
+
+        if (error) {
+          console.error('Ошибка получения таблицы:', error);
+          return;
+        }
+
+        const tbody = document.querySelector('#tournament-table tbody');
+        tbody.innerHTML = '';
+        data.forEach((entry, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${entry.username}</td>
+            <td>${entry.score}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (e) {
+        console.error('Исключение:', e);
+      }
+    }
+
+    // Реальное время для автоматического обновления таблицы
+    supabase
+      .channel('users')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
+        fetchTable();
+      })
+      .subscribe();
+
+    // Инициальная загрузка таблицы
+    fetchTable();
+
+    // Интеграция с кнопкой "изменить размер" (пример)
+    document.getElementById('change-size-button').addEventListener('click', async () => {
+      // Предполагается, что у вас есть функция calculateNewSize()
+      const newScore = calculateNewSize(); // Замените на вашу логику
+      document.getElementById('size-display').textContent = newScore;
+
+      const user = window.Telegram.WebApp.initDataUnsafe.user;
+      try {
+        const { error } = await supabase
+          .from('users')
+          .upsert({
+            userId: user.id.toString(),
+            username: user.username || 'Аноним',
+            score: newScore
+          });
+
+        if (error) {
+          console.error('Ошибка отправки счета:', error);
+        } else {
+          fetchTable();
+        }
+      } catch (e) {
+        console.error('Исключение:', e);
+      }
+    });
+  </script>
+</body>
+</html>
