@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Турнир</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+</head>
+<body>
+  <div class="container">
+    <div class="tournament-image">
+      <div class="tour-img">
+        <img src="img/Vector (4).svg" alt="" style="width: 65px;">
+      </div>
+    </div>
+
+    <div class="tournament-info">
+      <div class="text-user">
+          Участники: <span id="participant-count"></span>
+      </div>
+      <table id="tournament-table" style="position: absolute;top: 15%;left: 30%;">
+        <thead>
+          <tr>
+            <th>Место</th>
+            <th>Игрок</th>
+            <th>Очки</th>
+          </tr>
+        </thead>
+        <tbody>
+            <!-- строки будут добавлены здесь -->
+        </tbody>
+      </table>
+      <div id="user-position"></div>
+      <div class="score-input">
+        <input type="number" id="score-input" placeholder="Введите очки" style="position: absolute;top: 70%;">
+        <button id="submit-score" style="position: absolute;top: 70%;left: 10%;">Отправить</button>
+      </div>
+    </div>
+
+    <nav class="bottom-menu">
+      <a href="tournament.html" class="menu-item active" data-page="tournament">
+        <div class="icon-container">
+          <img src="img/tournament-gray.svg" alt="Турнир (серый)" class="gray">
+          <img src="img/tournament-green.svg" alt="Турнир (зеленый)" class="green">
+        </div>
+        <span>Турнир</span>
+      </a>
+      <a href="index.html" class="menu-item" data-page="home">
+        <div class="icon-container">
+          <img src="img/home-gray.svg" alt="Домой (серый)" class="gray">
+          <img src="img/home-green.svg" alt="Домой (зеленый)" class="green">
+        </div>
+        <span>Домой</span>
+      </a>
+      <a href="settings.html" class="menu-item" data-page="settings">
+        <div class="icon-container">
+          <img src="img/settings-gray.svg" alt="Настройки (серый)" class="gray">
+          <img src="img/settings-green.svg" alt="Настройки (зеленый)" class="green">
+        </div>
+        <span>Настройки</span>
+      </a>
+    </nav>
+  </div>
+  <script>
+
+    //
+    const menuItems = document.querySelectorAll('.menu-item');
+    function handleMenuClick(event) {
+      event.preventDefault();
+      menuItems.forEach(item => item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      localStorage.setItem('activePage', event.currentTarget.dataset.page);
+      window.location.href = event.currentTarget.href;
+    }
+
+    menuItems.forEach(item => item.addEventListener('click', handleMenuClick));
+
+    window.addEventListener('load', () => {
+      const activePage = localStorage.getItem('activePage') || 'home';
+      menuItems.forEach(item => {
+        item.classList.toggle('active', item.dataset.page === activePage);
+      });
+    });
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+      document.body.style.backgroundColor = Telegram.WebApp.themeParams.bg_color || '#F8F8F8';
+      document.querySelector('.bottom-menu').style.backgroundColor =
+        Telegram.WebApp.themeParams.secondary_bg_color || '#fff';
+    }
+
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+  // Инициализация Supabase
+  const supabase = createClient('https://gewontcvsqhogoqjeavi.supabase.co', '0CVUkqRt7QfxEnEmD3e/EOzhYIfmEf3UQnCrvWxQn6ss6iJ0oMiGltZ1sPz0iDbI/7wG5QC2UQHd9JH83jcJWw==');
+
+  // Получение данных пользователя из Telegram
+  const user = window.Telegram.WebApp.initDataUnsafe.user;
+  const userId = user.id;
+  const username = user.username || user.first_name;
+
+  // Функция для загрузки и отображения данных
+  async function loadTournamentData() {
+    // Проверка существования пользователя, вставка если нет
+    const { data: existingUser, error: fetchError } = await supabase
+      .from('players')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      console.error('Ошибка при получении пользователя:', fetchError);
+      return;
+    }
+
+    if (!existingUser) {
+      const { error: insertError } = await supabase
+        .from('players')
+        .insert([{ user_id: userId, username: username, score: 0 }]);
+
+      if (insertError) {
+        console.error('Ошибка при вставке пользователя:', insertError);
+        return;
+      }
+    } else {
+      // Обновление имени пользователя если изменилось
+      if (existingUser.username !== username) {
+        const { error: updateError } = await supabase
+          .from('players')
+          .update({ username: username })
+          .eq('user_id', userId);
+
+        if (updateError) {
+          console.error('Ошибка при обновлении имени пользователя:', updateError);
+        }
+      }
+    }
+
+    // Получение топ-5 игроков
+    const { data: topPlayers, error: topError } = await supabase
+      .from('players')
+      .select('*')
+      .order('score', { ascending: false })
+      .limit(5);
+
+    if (topError) {
+      console.error('Ошибка при получении топ игроков:', topError);
+      return;
+    }
+
+    // Получение общего количества участников
+    const { count, error: countError } = await supabase
+      .from('players')
+      .select('user_id', { count: 'exact', head: true });
+
+    if (countError) {
+      console.error('Ошибка при получении количества участников:', countError);
+      return;
+    }
+    const totalParticipants = count;
+
+    // Получение очков пользователя
+    const { data: userData, error: userError } = await supabase
+      .from('players')
+      .select('score')
+      .eq('user_id', userId)
+      .single();
+
+    if (userError) {
+      console.error('Ошибка при получении данных пользователя:', userError);
+      return;
+    }
+    const userScore = userData.score;
+
+    // Расчет ранга пользователя
+    const { data: betterPlayers, error: betterError } = await supabase
+      .from('players')
+      .select('user_id')
+      .gt('score', userScore);
+
+    if (betterError) {
+      console.error('Ошибка при получении игроков с большим количеством очков:', betterError);
+      return;
+    }
+    const userRank = betterPlayers.length + 1;
+
+    // Отображение количества участников
+    document.getElementById('participant-count').textContent = totalParticipants;
+
+    // Отображение топ игроков
+    const tableBody = document.querySelector('#tournament-table tbody');
+    tableBody.innerHTML = ''; // Очистка существующих строк
+    topPlayers.forEach((player, index) => {
+      const row = document.createElement('tr');
+      if (player.user_id === userId) {
+        row.classList.add('user-row');
+      }
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${player.username}</td>
+        <td>${player.score}</td>
+      `;
+      tableBody.appendChild(row);
+    });
+
+    // Отображение позиции пользователя если он не в топ-5
+    if (!topPlayers.some(player => player.user_id === userId)) {
+      document.getElementById('user-position').textContent = `Ваше место: ${userRank}, очки: ${userScore}`;
+    } else {
+      document.getElementById('user-position').textContent = '';
+    }
+  }
+
+  // Вызов функции
+  loadTournamentData();
+
+  // Обработка отправки очков
+  document.getElementById('submit-score').addEventListener('click', async () => {
+    const newScore = document.getElementById('score-input').value;
+    if (newScore === '') {
+      alert('Пожалуйста, введите очки');
+      return;
+    }
+    const { error } = await supabase
+      .from('players')
+      .update({ score: parseInt(newScore) })
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Ошибка при обновлении очков:', error);
+      alert('Ошибка при обновлении очков');
+    } else {
+      alert('Очки обновлены');
+      loadTournamentData(); // Обновление данных
+    }
+  });
+
+</script>
+</body>
+</html>
