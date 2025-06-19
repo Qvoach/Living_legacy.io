@@ -166,7 +166,13 @@
 
   let telegramUser = { id: 0, username: 'TestUser' };
   if (window.Telegram && Telegram.WebApp) {
-    telegramUser = Telegram.WebApp.initDataUnsafe.user || telegramUser;
+    const user = Telegram.WebApp.initDataUnsafe.user;
+    if (user && user.id) {
+      telegramUser = {
+      id: user.id,
+      username: user.username || `${user.first_name || ''} ${user.last_name || ''}`.trim()
+      };
+    }
   }
 
   try {
