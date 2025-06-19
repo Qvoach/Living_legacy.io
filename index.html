@@ -141,7 +141,12 @@
   } else {
     cedarSizeElement.textContent = '0'; // Значение по умолчанию
   }
-
+  document.addEventListener('click', function (event) {
+  const input = document.querySelector('#cedar-size input');
+  if (input && event.target !== input) {
+    input.blur(); // снимаем фокус → запускается сохранение
+  }
+});
   // Заменить на поле ввода при клике
   changeSizeButton.addEventListener('click', function () {
     const currentText = cedarSizeElement.textContent;
