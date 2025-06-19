@@ -106,10 +106,16 @@
     );
 
     // Если нет данных от Telegram WebApp (локальный тест), задаём тестового пользователя.
-    let telegramUser = {
-    id: Number(localStorage.getItem('mockTelegramId')) || Date.now(),
-    username: 'TestUser'
-    };
+    let telegramUser = { id: 0, username: 'TestUser' };
+    if (window.Telegram && Telegram.WebApp) {
+      const user = Telegram.WebApp.initDataUnsafe.user;
+      if (user && user.id) {
+      telegramUser = {
+        id: user.id,
+        username: user.username || `${user.first_name || ''} ${user.last_name || ''}`.trim()
+      };
+     }
+    }
     localStorage.setItem('mockTelegramId', telegramUser.id);
     if (window.Telegram && Telegram.WebApp) {
       telegramUser = Telegram.WebApp.initDataUnsafe.user;
