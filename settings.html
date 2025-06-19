@@ -58,11 +58,18 @@
     menuItems.forEach(item => item.addEventListener('click', handleMenuClick));
 
     window.addEventListener('load', () => {
-      const activePage = localStorage.getItem('activePage') || 'home';
-      menuItems.forEach(item => {
-        item.classList.toggle('active', item.dataset.page === activePage);
-      });
-    });
+    const path = window.location.pathname;
+
+    let currentPage = 'home';
+    if (path.includes('tournament')) currentPage = 'tournament';
+    else if (path.includes('settings')) currentPage = 'settings';
+
+    localStorage.setItem('activePage', currentPage); // ✅ Обновляем активную вкладку
+
+    menuItems.forEach(item => {
+    item.classList.toggle('active', item.dataset.page === currentPage);
+  });
+});
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
