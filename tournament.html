@@ -19,7 +19,7 @@
 
     <div class="tournament-info">
         <div class="text-user">
-          Участники: <span id="participants-count">0</span>
+          <!--Участники: <span id="participants-count">0</span>-->
         </div>
         <div class="tournament-table">
           <table id="leaderboard">
@@ -156,7 +156,7 @@
       const userPosElem = document.getElementById('user-position');
       if (userPosElem) {
         if (userPosition !== -1) {
-          userPosElem.textContent = `Ваше место: ${userPosition + 1}`;
+          //userPosElem.textContent = `Ваше место: ${userPosition + 1}`;//
         } else {
           userPosElem.textContent = 'Вы еще не участвуете в турнире';
         }
