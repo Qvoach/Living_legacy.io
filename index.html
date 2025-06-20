@@ -82,9 +82,16 @@
     menuItems.forEach(item => item.addEventListener('click', handleMenuClick));
 
     window.addEventListener('load', () => {
-      const activePage = localStorage.getItem('activePage') || 'home';
+      const path = window.location.pathname;
+    
+      let currentPage = 'home'; // По умолчанию — index.html
+      if (path.includes('tournament')) currentPage = 'tournament';
+      else if (path.includes('settings')) currentPage = 'settings';
+    
+      localStorage.setItem('activePage', currentPage);
+    
       menuItems.forEach(item => {
-        item.classList.toggle('active', item.dataset.page === activePage);
+        item.classList.toggle('active', item.dataset.page === currentPage);
       });
     });
     //Полив Осмотр Мульчирование
