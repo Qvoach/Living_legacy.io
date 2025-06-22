@@ -13,6 +13,7 @@ body {
 
 /* Контейнер для контента */
 .container {
+  position: relative;
   width: 100%;
   max-width: 402px; /* Максимальная ширина для Telegram Mini App */
   min-height: 100vh; /* Полная высота */
