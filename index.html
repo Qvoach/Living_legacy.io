@@ -305,25 +305,6 @@
     this.value = this.value.replace(/[^0-9,]/g, ''); // Разрешить только цифры и запятую
     });
 
-  // Принудительное удержание меню внизу
-    setInterval(() => {
-    const bottomMenu = document.querySelector('.bottom-menu');
-    if (bottomMenu && bottomMenu.style.bottom !== '0px') {
-      bottomMenu.style.bottom = '0px';
-      console.log('Forced bottom: 0px');
-    }
-  }, 100);
-
-  // Нейтрализация Telegram
-  if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.expand();
-    Telegram.WebApp.disableVerticalSwipes();
-    Telegram.WebApp.onEvent('viewportChanged', () => {
-      const bottomMenu = document.querySelector('.bottom-menu');
-      bottomMenu.style.bottom = '0px';
-      console.log('Viewport changed, bottom forced to 0px');
-    });
-  }
   </script>
 
 </body>
