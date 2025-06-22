@@ -325,6 +325,27 @@
       console.log('Viewport changed, bottom forced to 0px');
     });
   }
+
+    if (window.Telegram && Telegram.WebApp) {
+  const bottomMenu = document.querySelector('.bottom-menu');
+
+  const adjustMenu = () => {
+    // общая высота окна браузера
+    const totalH = window.innerHeight;
+    // высота доступной области WebApp (без клавиатуры)
+    const viewH = Telegram.WebApp.viewportHeight;
+    // получаем высоту клавиатуры (если она открыта)
+    const kbH = Math.max(0, totalH - viewH);
+
+    // сдвигаем меню вверх на эту высоту
+    bottomMenu.style.bottom = ${kbH}px;
+  };
+
+  // при любом изменении вьюпорта (включая открытие/закрытие клавиатуры)
+  Telegram.WebApp.onEvent('viewportChanged', adjustMenu);
+  // первый вызов для корректного положения сразу
+  adjustMenu();
+}
   </script>
 
 </body>
