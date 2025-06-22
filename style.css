@@ -179,7 +179,6 @@ body {
 /* Меню внизу */
 .bottom-menu {
   position:fixed;
-  bottom: 0;
   left: 0;
   right: 0;
   display: flex;
@@ -193,6 +192,7 @@ body {
   margin: 0 auto;
   transform: none;
   will-change: auto;
+  z-index:100;
 }
 
 /* Стили для каждой вкладки */
