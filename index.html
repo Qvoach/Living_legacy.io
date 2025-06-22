@@ -306,6 +306,26 @@
     this.value = this.value.replace(/[^0-9,]/g, ''); // Разрешить только цифры и запятую
     });
 
+    if (window.Telegram && Telegram.WebApp) {
+  const bottomMenu = document.querySelector('.bottom-menu');
+
+  function adjustBottomMenu() {
+    const container = document.querySelector('.container');
+    const menuHeight = bottomMenu.offsetHeight;
+
+    // Получаем высоту видимой области от Telegram
+    const viewportHeight = Telegram.WebApp.viewportHeight * window.innerHeight;
+
+    // Меняем высоту контейнера на видимую часть, чтобы меню не уехало
+    container.style.minHeight = ${viewportHeight}px;
+
+    // Меню прижимаем к низу видимой области
+    bottomMenu.style.bottom = '0px';
+  }
+
+  Telegram.WebApp.onEvent('viewportChanged', adjustBottomMenu);
+  adjustBottomMenu(); // при загрузке
+}
 
 
   </script>
