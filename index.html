@@ -325,6 +325,20 @@
       console.log('Viewport changed, bottom forced to 0px');
     });
   }
+
+  const bottomMenu = document.querySelector('.bottom-menu');
+  const adjustBottom = () => {
+  // разница между полной высотой окна и видимой областью — это высота клавиатуры
+  const keyboardHeight = window.innerHeight - window.visualViewport.height;
+  // если клавиатура открыта, keyboardHeight > 0
+  bottomMenu.style.bottom = (keyboardHeight > 0 ? keyboardHeight : 0) + 'px';
+};
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', adjustBottom);
+  // вызвать один раз при загрузке, на случай автотриггера
+  adjustBottom();
+}
   </script>
 
 </body>
