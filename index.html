@@ -42,7 +42,7 @@
       <div class="button-change" id="change-size-btn">Изменить размер</div>
       <div class="button-history">История</div>
       <div class="button-photo">Сделать фото</div>
-      <input type="number" id="size-input" style="display: none;" pattern="[0-9]*">
+      <input type="number" id="size-input" style="display: none;" >
     </div>
 
     <div class="lower"></div>
@@ -298,7 +298,9 @@
         window.location.href = 'history.html';
       });
     });
-
+    sizeInput.addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9,]/g, ''); // Разрешить только цифры и запятую
+    });
   </script>
 
 </body>
