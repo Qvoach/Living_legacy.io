@@ -226,8 +226,12 @@
   };
 
   // Обработка потери фокуса (blur)
-  sizeInput.addEventListener('blur', saveAndSendToSupabase);
+  sizeInput.addEventListener('blur', async () => {
+  await saveAndSendToSupabase();
 
+  // 👇 Принудительно скроллим вверх, чтобы не остаться внизу
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
   // Обработка нажатия Enter
   sizeInput.addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
