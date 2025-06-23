@@ -1,0 +1,229 @@
+body {
+  background-color: #F8F8F8;
+  margin: 0;
+  min-height: 100vh; /* Полная высота экрана для адаптивности */
+  font-family: "Inter", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Начинаем с верхней части */
+  overflow-x: hidden; /* Убираем горизонтальный скролл */
+}
+
+.container {
+  width: 100%;
+  max-width: 402px; /* Максимальная ширина для Telegram Mini App */
+  min-height: 100vh; /* Полная высота */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 80px; /* Отступ снизу для меню */
+  text-align: center;
+}
+
+.bottom-menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  box-shadow: 4px 2px 4px rgb(31, 31, 31);
+  padding: 10px 20px;
+  width: 100%;
+  max-width: 402px;
+  margin: 0 auto;
+}
+
+/* Стили для каждой вкладки */
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  font-size: 12px;
+  transition: color 0.3s ease;
+  flex: 1;
+  text-align: center;
+  margin-right: 50px;
+}
+
+.menu-item span {
+  display: block; /* Гарантируем, что текст всегда виден */
+  margin-top: 2px; /* Небольшой отступ от иконки */
+}
+
+/* Контейнер для иконок */
+.icon-container {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+/* Стили для иконок */
+.menu-item img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* По умолчанию показываем серую иконку */
+.menu-item img.gray {
+  opacity: 1;
+}
+.menu-item img.green {
+  opacity: 0;
+}
+
+/* При активной вкладке показываем зеленую иконку */
+.menu-item.active img.gray {
+  opacity: 0;
+}
+.menu-item.active img.green {
+  opacity: 1;
+}
+
+/* Активная вкладка: текст становится зеленым */
+.menu-item.active {
+  color: #00B368;
+}
+
+/* Адаптация для Telegram Web App (темная тема) */
+@media (prefers-color-scheme: dark) {
+  .bottom-menu {
+    background-color: #ffffff;
+    border-top-color: #2a3b3c;
+  }
+  .menu-item {
+    color: #9B9B9B;
+  }
+  .menu-item.active {
+    color: #00B368;
+  }
+}
+
+/* Адаптивная верстка для Telegram Mini App */
+@media (max-width: 320px) {
+  .container, .header, .tasks, .info, .lower, .bottom-menu {
+    width: 100%;
+    padding: 0 5px;
+  }
+  .button, .button-change, .button-history, .button-photo {
+    width: 90%;
+  }
+  .user-photo {
+    width: 60px;
+    height: 60px;
+  }
+  .username {
+    font-size: 28px;
+  }
+  .task {
+    font-size: 20px;
+  }
+  .menu-item {
+    font-size: 10px;
+  }
+  .icon-container {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+@media (min-width: 403px) {
+  .container {
+    max-width: 100%;
+  }
+  .bottom-menu {
+    max-width: 100%;
+  }
+}
+
+
+.tournament-image{
+  background-color: #00B368;
+  width: 20vh;
+  height: 20vh;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-top: 10%;
+}
+
+.tour-img{
+  position: absolute;
+  left: 27%;
+  top: 30%;
+}
+
+.tournament-info{
+  width: 94%; /* Адаптивная ширина */
+  height: 100%;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: 2px 2px 4px rgb(226, 226, 226), -2px -2px 4px rgb(226, 226, 226), -2px 2px 4px rgb(226, 226, 226), 2px -2px 4px rgb(226, 226, 226);
+  margin: 12px 0;
+  text-align: center;
+  margin-top: 5%;
+  position: relative;
+}
+
+.text-user{
+  font-size: 20px;
+  position: absolute;
+  left: 5%;
+  top: 90%;
+  font-weight: 500;
+}
+
+.tournament-table {
+  margin-top: 0px;
+  width: 100%;
+  max-width: 600px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+.user-position {
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #28a745;
+}
+#submit-score-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+#score-input {
+  margin-top: 10px;
+  padding: 8px;
+  width: 100%;
+  max-width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
