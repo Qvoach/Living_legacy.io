@@ -231,12 +231,12 @@ body {
 }
 
 #size-input {
-  width: 80px; /* Установите ширину по вашим нуждам */
+  width: 35px; /* Установите ширину по вашим нуждам */
   border-radius: 5px;
   border: 1px solid #ccc;
   top: 0;
   left: 0;
-  font-size: 20px;
+  font-size: 15px;
 
 }
 .photo-date{
