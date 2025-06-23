@@ -347,6 +347,9 @@
       console.log('Viewport changed, bottom forced to 0px');
     });
   }
+  document.addEventListener('touchmove', function (e) {
+  e.preventDefault();
+  }, { passive: false });
   </script>
 
 </body>
