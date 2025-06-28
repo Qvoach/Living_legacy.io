@@ -8,6 +8,7 @@ body {
   align-items: flex-start; /* Начинаем с верхней части */
   overflow-x: hidden;
   overflow-y: auto;
+  height:100%;
 }
 
 /* Контейнер для контента */
