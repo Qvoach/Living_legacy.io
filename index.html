@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Домой</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://telegram.org/js/telegram-web-app.js?57"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <input type="file" accept="image/*" id="photo-input" style="display: none;">
+  <div class="container">
+    <header class="header">
+        <div class="user-info">
+          <img id="user-photo" src="img/istockphoto-1495088043-612x612.jpg" alt="Фотография пользователя" style="width: 100px; height: 100px; border-radius: 50%;margin-left: 8%;">
+          <span id="user-name" style="font-size: 40px;"></span>
+        </div>
+    </header>
+
+    <div class="tasks">
+      <div class="task">Задачи</div>
+      <div class="buttons">
+        <div class="button">Полив</div>
+        <div class="button" >Осмотр</div>
+        <div class="button">Мульчирование</div>
+      </div>
+    </div>
+
+    <div class="info">
+      <div class="cedar-section">
+        Кедр: 
+        <span class="size-container">
+          <span id="cedar-size">0</span>
+          <input type="number" id="size-input" style="display: none;"step="0.01" min="0" lang="ru">
+        </span>&nbsp;см
+      </div>
+      <div class="photo-date">
+        <span id="photo-date"></span>
+      </div>
+      <img id="current-photo" src="" alt="Текущее фото" style="max-width: 140px; height: 140px; margin-left: 10px;position: absolute;right: 5%;top: 3%; border-radius: 10px;">
+      <div class="button-change" id="change-size-btn">Изменить размер</div>
+      <div class="button-history">История</div>
+      <div class="button-photo">Сделать фото</div>
+    </div>
+
+
+
+    <div class="bottom-menu">
+      <a href="tournament.html" class="menu-item" data-page="tournament">
+        <div class="icon-container">
+          <img src="img/tournament-gray.svg" alt="Турнир (серый)" class="gray">
+          <img src="img/tournament-green.svg" alt="Турнир (зеленый)" class="green">
+        </div>
+        <span>Турнир</span>
+      </a>
+      <a href="index.html" class="menu-item active" data-page="home">
+        <div class="icon-container">
+          <img src="img/home-gray.svg" alt="Домой (серый)" class="gray">
+          <img src="img/home-green.svg" alt="Домой (зеленый)" class="green">
+        </div>
+        <span>Домой</span>
+      </a>
+      <a href="settings.html" class="menu-item" data-page="settings">
+        <div class="icon-container">
+          <img src="img/settings-gray.svg" alt="Настройки (серый)" class="gray">
+          <img src="img/settings-green.svg" alt="Настройки (зеленый)" class="green">
+        </div>
+        <span>Настройки</span>
+      </a>
+    </div>
+  </div>
+
+
+
+  <script>
+    // Обработчики для меню (Турнир, Домой, Настройки)
+    const menuItems = document.querySelectorAll('.menu-item');
+
+    function handleMenuClick(event) {
+      event.preventDefault();
+      menuItems.forEach(item => item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      localStorage.setItem('activePage', event.currentTarget.dataset.page);
+      window.location.href = event.currentTarget.href;
+    }
+
+    menuItems.forEach(item => item.addEventListener('click', handleMenuClick));
+
+    window.addEventListener('load', () => {
+      const path = window.location.pathname;
+
+      let currentPage = 'home'; // По умолчанию — index.html
+      if (path.includes('tournament')) currentPage = 'tournament';
+      else if (path.includes('settings')) currentPage = 'settings';
+
+      localStorage.setItem('activePage', currentPage);
+
+      menuItems.forEach(item => {
+        item.classList.toggle('active', item.dataset.page === currentPage);
+      });
+    });
+    //Полив Осмотр Мульчирование
+    document.addEventListener('DOMContentLoaded', function () {
+      const buttons = document.querySelectorAll('.button');
+
+      buttons.forEach(button => {
+        const buttonKey = button.innerText;
+        if (localStorage.getItem(buttonKey) === 'clicked') {
+          button.classList.add('clicked');
+        }
+
+        button.addEventListener('click', function () {
+          const isClicked = button.classList.toggle('clicked');
+          if (isClicked) {
+            localStorage.setItem(buttonKey, 'clicked');
+          } else {
+            localStorage.removeItem(buttonKey);
+          }
+        });
+      });
+    });
+    //Фото профиля
+    document.addEventListener('DOMContentLoaded',
+    function () {
+      if (window.Telegram && window.Telegram.WebApp) {
+        const user = Telegram.WebApp.initDataUnsafe.user;
+        if (user) {
+          const userName = `${user.first_name} ${user.last_name || ''}`.trim();
+          const photoUrl = user.photo_url || 'default_photo.jpg';
+          
+          const nameElement = document.getElementById('user-name');
+          const photoElement = document.getElementById('user-photo');
+          
+          if (nameElement) {
+            nameElement.textContent = userName;
+          }
+          if (photoElement) {
+            photoElement.src = photoUrl;
+            photoElement.alt = userName;
+          }
+        }
+      }
+    });
+ 
+    //Изменить размер
+
+  document.addEventListener('DOMContentLoaded', function () {
+  const cedarSizeElement = document.getElementById('cedar-size');
+  const changeSizeButton = document.getElementById('change-size-btn');
+  const sizeInput = document.getElementById('size-input');
+
+  // Загрузить сохраненное значение из localStorage
+  const savedSize = localStorage.getItem('cedarSize');
+  if (savedSize) {
+    cedarSizeElement.textContent = savedSize.replace('.', ','); // Отображаем с запятой
+  } else {
+    cedarSizeElement.textContent = '0';
+  }
+
+  // Показать поле ввода при нажатии на кнопку
+  changeSizeButton.addEventListener('click', function () {
+    const currentText = cedarSizeElement.textContent.replace(',', '.'); // Преобразуем в число
+    cedarSizeElement.style.display = 'none';
+    sizeInput.style.display = 'inline-block';
+    sizeInput.value = parseFloat(currentText) || 0;
+    sizeInput.focus();
+  });
+
+  // Функция для сохранения значения и отправки в Supabase
+  const saveAndSendToSupabase = async () => {
+    if (sizeInput.style.display !== 'inline-block') return;
+
+    let newValue = sizeInput.value.replace(',', '.'); // Преобразуем запятую в точку для Supabase
+    let numericValue = parseFloat(newValue) || 0;
+
+    // Обновление интерфейса с запятой
+    cedarSizeElement.textContent = numericValue.toFixed(2).replace('.', ','); // Отображаем с запятой
+    cedarSizeElement.style.display = 'inline-block';
+    sizeInput.style.display = 'none';
+    localStorage.setItem('cedarSize', numericValue.toFixed(2)); // Сохраняем с точкой
+
+    // Supabase и Telegram
+    const { createClient } = supabase;
+    const supabaseClient = createClient(
+      'https://gewontcvsqhogoqjeavi.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdld29udGN2c3Fob2dvcWplYXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDI3MzIsImV4cCI6MjA2NTY3ODczMn0.K5lUX-rHdIC3MCdRgCk4giDjPGjiHTg7SBHgJmcT4VA'
+    );
+
+    let telegramUser = { id: 0, username: 'TestUser' };
+    if (window.Telegram && Telegram.WebApp) {
+      const user = Telegram.WebApp.initDataUnsafe.user;
+      if (user && user.id) {
+        telegramUser = {
+          id: user.id,
+          username: user.username || `${user.first_name || ''} ${user.last_name || ''}`.trim()
+        };
+      }
+    }
+
+    try {
+      const score = parseFloat(newValue) || 0;
+
+      const { error } = await supabaseClient
+        .from('tournament_scores')
+        .upsert({
+          telegram_id: telegramUser.id,
+          username: telegramUser.username || 'Аноним',
+          score: score
+        }, { onConflict: ['telegram_id'] });
+
+      console.log('Отправлено в Supabase:', {
+        telegram_id: telegramUser.id,
+        username: telegramUser.username,
+        score
+      });
+
+      if (error) {
+        console.error('Ошибка при сохранении в Supabase:', error.message);
+      } else {
+        console.log('Данные обновлены успешно.');
+      }
+    } catch (e) {
+      console.error('Ошибка обработки:', e.message);
+    }
+  };
+
+  // Обработка потери фокуса (blur)
+  sizeInput.addEventListener('blur', async () => {
+  await saveAndSendToSupabase();
+
+  // 👇 Принудительно скроллим вверх, чтобы не остаться внизу
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  // Обработка нажатия Enter
+  sizeInput.addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+      sizeInput.blur();
+    }
+  });
+
+  // Универсальный обработчик для мобильных (touchstart) и ПК (click)
+  const handleOutsideInteraction = (event) => {
+    if (
+      sizeInput.style.display === 'inline-block' &&
+      event.target !== sizeInput &&
+      event.target !== changeSizeButton
+    ) {
+      saveAndSendToSupabase();
+    }
+  };
+
+  document.addEventListener('touchstart', handleOutsideInteraction);
+  document.addEventListener('click', handleOutsideInteraction);
+});
+
+    //Сделать фото
+    document.addEventListener('DOMContentLoaded', function () {
+
+      // Загрузка сохраненного фото и даты
+      const savedPhoto = localStorage.getItem('currentPhoto');
+      const savedDate = localStorage.getItem('photoDate');
+      if (savedPhoto) {
+        document.getElementById('current-photo').src = savedPhoto;
+      }
+      if (savedDate) {
+        document.getElementById('photo-date').textContent = `Фото:${savedDate}`;
+      }
+
+      // Запуск выбора файла при клике на кнопку
+      document.querySelector('.button-photo').addEventListener('click', function() {
+        document.getElementById('photo-input').click();
+      });
+
+      // Обработка выбранного файла
+      document.getElementById('photo-input').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+  const dataURL = e.target.result;
+  const currentPhoto = document.getElementById('current-photo').src;
+
+    // Сохранить предыдущее фото в историю
+  let history = JSON.parse(localStorage.getItem('photoHistory') || '[]');
+
+  if (currentPhoto && currentPhoto.startsWith('data:image')) {
+  const cedarSize = document.getElementById('cedar-size').textContent; // Получаем размер кедра
+
+  history.push({
+    src: currentPhoto,
+    date: localStorage.getItem('photoDate'),
+    size: cedarSize // Добавляем размер в объект истории
+  });
+
+  localStorage.setItem('photoHistory', JSON.stringify(history));
+  }
+
+
+    // Установить новое фото и дату
+    const now = new Date();
+    const dateString = now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+    document.getElementById('current-photo').src = dataURL;
+    document.getElementById('photo-date').textContent = `Фото:${dateString}`;
+
+    // Функция с безопасным сохранением
+    function trySavePhoto() {
+      try {
+        localStorage.setItem('photoHistory', JSON.stringify(history));
+        localStorage.setItem('currentPhoto', dataURL);
+        localStorage.setItem('photoDate', dateString);
+      } catch (err) {
+        // Если переполнение — удаляем самое старое фото и пробуем снова
+        if (history.length > 0) {
+          history.shift(); // Удаляем самое старое фото
+          trySavePhoto(); // Пробуем снова
+        } else {
+          Telegram.WebApp?.showAlert?.('Недостаточно памяти для сохранения фото.');
+          console.error('Не удалось сохранить фото даже после очистки истории:', err.message);
+        }
+      }
+    }
+
+    trySavePhoto();
+  };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Кнопка истории
+      document.querySelector('.button-history').addEventListener('click', function() {
+        window.location.href = 'history.html';
+      });
+    });
+
+
+
+  // Принудительное удержание меню внизу
+    setInterval(() => {
+    const bottomMenu = document.querySelector('.bottom-menu');
+    if (bottomMenu && bottomMenu.style.bottom !== '0px') {
+      bottomMenu.style.bottom = '0px';
+      console.log('Forced bottom: 0px');
+    }
+  }, 100);
+
+  // Нейтрализация Telegram
+  if (window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.expand();
+    Telegram.WebApp.disableVerticalSwipes();
+    Telegram.WebApp.onEvent('viewportChanged', () => {
+      const bottomMenu = document.querySelector('.bottom-menu');
+      bottomMenu.style.bottom = '0px';
+      console.log('Viewport changed, bottom forced to 0px');
+    });
+  }
+
+  </script>
+
+</body>
+</html>
