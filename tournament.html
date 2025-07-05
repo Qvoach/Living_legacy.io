@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Турнир</title>
+  <link rel="stylesheet" href="tournament.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+</head>
+<body>
+  
+  <div class="container">
+    <div class="tournament-image">
+      <div class="tour-img">
+        <img src="img/Vector (4).svg" alt="" style="width: 65px;margin-left:4%;" >
+      </div>
+    </div>
+
+    <div class="tournament-info">
+        <div class="text-user">
+           <!--Участники: <span id="participants-count">0</span>-->
+        </div>
+        <div class="tournament-table">
+          <table id="leaderboard">
+            <thead>
+              <tr>
+                <th>Место</th>
+                <th>Имя</th>
+                <th>Размер</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body"></tbody>
+          </table>
+          <div id="user-position"></div>
+        </div>
+    </div>
+
+  </div>
+
+
+
+    <nav class="bottom-menu">
+      <a href="tournament.html" class="menu-item active" data-page="tournament">
+        <div class="icon-container">
+          <img src="img/tournament-gray.svg" alt="Турнир (серый)" class="gray">
+          <img src="img/tournament-green.svg" alt="Турнир (зеленый)" class="green">
+        </div>
+        <span>Турнир</span>
+      </a>
+      <a href="index.html" class="menu-item" data-page="home">
+        <div class="icon-container">
+          <img src="img/home-gray.svg" alt="Домой (серый)" class="gray">
+          <img src="img/home-green.svg" alt="Домой (зеленый)" class="green">
+        </div>
+        <span>Домой</span>
+      </a>
+      <a href="settings.html" class="menu-item" data-page="settings">
+        <div class="icon-container">
+          <img src="img/Like.svg" alt="Лайк (серый)" class="gray">
+          <img src="img/Like_active.svg" alt="Лайк (зеленый)" class="green">
+        </div>
+        <span>Лайк</span>
+      </a>
+    </nav>
+  </div>
+  <script>
+
+    //Нижнее меню
+    const menuItems = document.querySelectorAll('.menu-item');
+    function handleMenuClick(event) {
+      event.preventDefault();
+      menuItems.forEach(item => item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      localStorage.setItem('activePage', event.currentTarget.dataset.page);
+      window.location.href = event.currentTarget.href;
+    }
+
+    menuItems.forEach(item => item.addEventListener('click', handleMenuClick));
+
+    window.addEventListener('load', () => {
+      const activePage = localStorage.getItem('activePage') || 'home';
+      menuItems.forEach(item => {
+        item.classList.toggle('active', item.dataset.page === activePage);
+      });
+    });
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+      document.body.style.backgroundColor = Telegram.WebApp.themeParams.bg_color || '#F8F8F8';
+      document.querySelector('.bottom-menu').style.backgroundColor =
+        Telegram.WebApp.themeParams.secondary_bg_color || '#fff';
+    }
+
+  </script>
+
+   <script>
+    // Инициализация клиента Supabase.
+    // Важно: не использовать переменную supabase для клиента, чтобы избежать конфликта.
+    // Вместо этого создаём новую переменную, например supabaseClient:contentReference[oaicite:2]{index=2}.
+    const { createClient } = supabase;
+    const supabaseClient = createClient(
+      'https://gewontcvsqhogoqjeavi.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdld29udGN2c3Fob2dvcWplYXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDI3MzIsImV4cCI6MjA2NTY3ODczMn0.K5lUX-rHdIC3MCdRgCk4giDjPGjiHTg7SBHgJmcT4VA'
+    );
+
+    // Если нет данных от Telegram WebApp (локальный тест), задаём тестового пользователя.
+    let telegramUser = { id: 0, username: 'TestUser' };
+      if (window.Telegram && Telegram.WebApp) {
+        const user = Telegram.WebApp.initDataUnsafe.user;
+        if (user && user.id) {
+          telegramUser = {
+            id: user.id,
+            username: user.username || `${user.first_name || ''} ${user.last_name || ''}`.trim()
+          };
+        }
+      }
+    localStorage.setItem('mockTelegramId', telegramUser.id);
+    if (window.Telegram && Telegram.WebApp) {
+      telegramUser = Telegram.WebApp.initDataUnsafe.user;
+    }
+
+    // Загрузка данных турнирной таблицы и обновление DOM
+    async function loadTournamentTable() {
+      // Выполняем запрос к таблице tournament_scores
+      const { data, error } = await supabaseClient
+        .from('tournament_scores')
+        .select('telegram_id, username, score')
+        .order('score', { ascending: false }); // сортировка по убыванию очков
+      if (error) {
+        console.error('Ошибка при запросе:', error.message);
+        return;
+      }
+
+      // Очищаем текущее содержимое таблицы
+      const tbody = document.getElementById('leaderboard-body');
+      tbody.innerHTML = '';
+
+      // Заполняем таблицу строками из полученных данных
+      data.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${row.username || 'Аноним'}</td>
+          <td>${row.score}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Обновляем количество участников
+      document.getElementById('participants-count').textContent = data.length || 0;
+      
+      // Показываем позицию текущего пользователя (если требуется)
+      const userPosition = data.findIndex(item => item.telegram_id === telegramUser.id);
+      const userPosElem = document.getElementById('user-position');
+      if (userPosElem) {
+        if (userPosition !== -1) {
+          //userPosElem.textContent = `Ваше место: ${userPosition + 1}`;//
+        } else {
+          userPosElem.textContent = 'Вы еще не участвуете в турнире';
+        }
+      }
+    }
+
+    // Запускаем загрузку после загрузки страницы
+    window.addEventListener('load', () => {
+      loadTournamentTable();
+    });
+  </script>
+</body>
+</html>
+
+
+ 
+
+  
+</body>
+</html>
